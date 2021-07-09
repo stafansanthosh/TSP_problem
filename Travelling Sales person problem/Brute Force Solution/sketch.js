@@ -1,61 +1,88 @@
 var cities = [];
-var totalCities = 20;
+var totalCities = 10;
+
+var order = [];
+
+var totalPermutations;
+var count = 0;
+var turn = 0;
 
 var recordDistance;
 var bestEver;
 
 function setup() {
-  createCanvas(800, 600);
-  for (var i = 0; i < totalCities; i++) {
-    var v = createVector(random(width), random(height/2));
-    cities[i] = v;
-  }
-
-  var d = calcDistance(cities);
-  recordDistance = d;
-  bestEver = cities.slice();
+  var canvas = createCanvas(800, 800);
+  canvas.parent('sketch-holder');
+  noLoop();
 }
 
 function draw() {
-  background(0);
-  fill(0);
-  noStroke();
-  textSize(12);
-  text(`Best: ${floor(recordDistance)}`, 340, 10);
+  if(turn == 1)
+  {
+    cities = [];
+    order = [];
+    for (var i = 0; i < totalCities; i++) {
+      var v = createVector(random(width), random(height / 2));
+      cities[i] = v;
+      order[i] = i;
+    }
 
-  fill(255);
+    count = 0;
+  
+    var d = calcDistance(cities, order);
+    recordDistance = d;
+    bestEver = order.slice();
+  
+    totalPermutations = factorial(totalCities);
+    console.log(totalPermutations);
+    turn = 0;
+  }
+  background(0);
+  //frameRate(5);
+  noFill(255);
   for (var i = 0; i < cities.length; i++) {
-    ellipse(cities[i].x, cities[i].y, 8, 8);
+    ellipse(cities[i].x, cities[i].y, 16, 16);
   }
 
   stroke(255);
-  strokeWeight(1);
+  strokeWeight(4);
   noFill();
   beginShape();
-  for (var i = 0; i < cities.length; i++) {
-    vertex(cities[i].x, cities[i].y);
+  for (var i = 0; i < order.length; i++) {
+    var n = bestEver[i];
+    vertex(cities[n].x, cities[n].y);
+    ellipse(cities[n].x, cities[n].y, 16, 16);
   }
   endShape();
 
   translate(0, height / 2);
   stroke(255);
-  strokeWeight(4);
+  strokeWeight(2);
   noFill();
   beginShape();
-  for (var i = 0; i < cities.length; i++) {
-    vertex(bestEver[i].x, bestEver[i].y);
+  for (var i = 0; i < order.length; i++) {
+    var n = order[i];
+    vertex(cities[n].x, cities[n].y);
+    ellipse(cities[n].x, cities[n].y, 16, 16);
   }
   endShape();
 
-  var i = floor(random(cities.length));
-  var j = floor(random(cities.length));
-  swap(cities, i, j);
-
-  var d = calcDistance(cities);
+  var d = calcDistance(cities, order);
   if (d < recordDistance) {
     recordDistance = d;
-    bestEver = cities.slice();
+    bestEver = order.slice();
   }
+
+  // textSize(32);
+  // // var s = '';
+  // // for (var i = 0; i < order.length; i++) {
+  // //   s += order[i];
+  // // }
+  // fill(255);
+  // var percent = 100 * (count / totalPermutations);
+  // text(nf(percent, 0, 2) + '% completed', 20, height / 2 - 50);
+
+  nextOrder();
 }
 
 function swap(a, i, j) {
@@ -64,11 +91,61 @@ function swap(a, i, j) {
   a[j] = temp;
 }
 
-function calcDistance(points) {
+function calcDistance(points, order) {
   var sum = 0;
-  for (var i = 0; i < points.length - 1; i++) {
-    var d = dist(points[i].x, points[i].y, points[i + 1].x, points[i + 1].y);
+  for (var i = 0; i < order.length - 1; i++) {
+    var cityAIndex = order[i];
+    var cityA = points[cityAIndex];
+    var cityBIndex = order[i + 1];
+    var cityB = points[cityBIndex];
+    var d = dist(cityA.x, cityA.y, cityB.x, cityB.y);
     sum += d;
   }
   return sum;
+}
+
+// This is my lexical order algorithm
+
+function nextOrder() {
+  count++;
+
+  for (var i = 0; i < order.length - 1; i++) {
+    if (order[i] < order[i + 1]) {
+      largestI = i;
+    }
+  }
+  if (largestI == -1) {
+    noLoop();
+    console.log('finished');
+  }
+
+  // STEP 2
+  var largestJ = -1;
+  for (var j = 0; j < order.length; j++) {
+    if (order[largestI] < order[j]) {
+      largestJ = j;
+    }
+  }
+
+  // STEP 3
+  swap(order, largestI, largestJ);
+
+  // STEP 4: reverse from largestI + 1 to the end
+  var endArray = order.splice(largestI + 1);
+  endArray.reverse();
+  order = order.concat(endArray);
+}
+
+function factorial(n) {
+  if (n == 1) {
+    return 1;
+  } else {
+    return n * factorial(n - 1);
+  }
+}
+
+function startloop() {
+  totalCities = document.querySelector(".form-control").value;
+  turn++;
+  loop();
 }
