@@ -1,10 +1,10 @@
-
 var cities = [];
-var totalCities = 20;
+var totalCities = 12;
 
 var popSize = 500;
 var population = [];
 var fitness = [];
+var turn = 0;
 
 var recordDistance = Infinity;
 var bestEver;
@@ -13,8 +13,27 @@ var currentBest;
 var statusP;
 
 function setup() {
-  createCanvas(1200, 1200);
+  var canvas = createCanvas(800, 800);
+  canvas.parent('sketch-holder');
   var order = [];
+  noLoop();
+  // for (var i = 0; i < totalCities; i++) {
+  //   var v = createVector(random(width), random(height / 2));
+  //   cities[i] = v;
+  //   order[i] = i;
+  // }
+
+  // for (var i = 0; i < popSize; i++) {
+  //   population[i] = shuffle(order);
+  // }
+  // statusP = createP('').style('font-size', '32pt');
+}
+
+function draw() {
+  if(turn == 1)
+  {
+  var order = [];
+  recordDistance = Infinity;
   for (var i = 0; i < totalCities; i++) {
     var v = createVector(random(width), random(height / 2));
     cities[i] = v;
@@ -25,12 +44,9 @@ function setup() {
     population[i] = shuffle(order);
   }
   statusP = createP('').style('font-size', '32pt');
-}
-
-function draw() {
+  turn = 0;
+  }
   background(0);
-
-  // GA
   calculateFitness();
   normalizeFitness();
   nextGeneration();
@@ -48,7 +64,7 @@ function draw() {
 
   translate(0, height / 2);
   stroke(255);
-  strokeWeight(4);
+  strokeWeight(2);
   noFill();
   beginShape();
   for (var i = 0; i < currentBest.length; i++) {
@@ -77,4 +93,11 @@ function calcDistance(points, order) {
     sum += d;
   }
   return sum;
+}
+
+
+function startloop() {
+  totalCities = document.querySelector(".form-control").value;
+  turn++;
+  loop();
 }
