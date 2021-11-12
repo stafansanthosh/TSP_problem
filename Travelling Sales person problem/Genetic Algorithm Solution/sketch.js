@@ -1,3 +1,4 @@
+//Genetic algorithm code
 var cities = [];
 var totalCities = 0;
 
