@@ -5,6 +5,7 @@ var order = [];
 
 var totalPermutations;
 var count = 0;
+var count_cities = 0;
 var turn = 0;
 
 var recordDistance;
@@ -19,20 +20,21 @@ function setup() {
 function draw() {
   if(turn == 1)
   {
-    cities = [];
-    order = [];
-    for (var i = 0; i < totalCities; i++) {
-      var v = createVector(random(width), random(height / 2));
-      cities[i] = v;
-      order[i] = i;
-    }
+    // cities = [];
+    // order = [];
+    // for (var i = 0; i < totalCities; i++) {
+    //   var v = createVector(random(width), random(height / 2));
+    //   cities[i] = v;
+    //   order[i] = i;
+    // }
 
     count = 0;
   
     var d = calcDistance(cities, order);
     recordDistance = d;
-    bestEver = order.slice();
-  
+    console.log('This');
+    //bestEver = order.slice();
+    
     totalPermutations = factorial(totalCities);
     console.log(totalPermutations);
     turn = 0;
@@ -48,7 +50,9 @@ function draw() {
   strokeWeight(4);
   noFill();
   beginShape();
+  bestEver = order.slice();
   for (var i = 0; i < order.length; i++) {
+    
     var n = bestEver[i];
     vertex(cities[n].x, cities[n].y);
     ellipse(cities[n].x, cities[n].y, 16, 16);
@@ -108,7 +112,7 @@ function calcDistance(points, order) {
 
 function nextOrder() {
   count++;
-
+  var largestI = -1;
   for (var i = 0; i < order.length - 1; i++) {
     if (order[i] < order[i + 1]) {
       largestI = i;
@@ -147,5 +151,18 @@ function factorial(n) {
 function startloop() {
   totalCities = document.querySelector(".form-control").value;
   turn++;
+  loop();
+}
+
+function mousePressed() {
+  // ellipse(mouseX, mouseY, 16, 16);
+  totalCities++;
+  recordDistance = Infinity;
+  var v = createVector(mouseX, mouseY);
+  
+  cities[count_cities] = v;
+  order[count_cities] = count_cities;
+  count_cities++;
+
   loop();
 }
