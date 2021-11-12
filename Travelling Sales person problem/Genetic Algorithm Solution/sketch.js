@@ -1,10 +1,11 @@
 var cities = [];
-var totalCities = 12;
+var totalCities = 0;
 
 var popSize = 500;
 var population = [];
 var fitness = [];
-var turn = 0;
+var count = 0;
+var order = [];
 
 var recordDistance = Infinity;
 var bestEver;
@@ -30,22 +31,21 @@ function setup() {
 }
 
 function draw() {
-  if(turn == 1)
-  {
-  var order = [];
-  recordDistance = Infinity;
-  for (var i = 0; i < totalCities; i++) {
-    var v = createVector(random(width), random(height / 2));
-    cities[i] = v;
-    order[i] = i;
-  }
+  // if(turn == 1)
+  // {
+  // var order = [];
+  // recordDistance = Infinity;
+  // for (var i = 0; i < totalCities; i++) {
+  //   var v = createVector(random(width), random(height / 2));
+  //   cities[i] = v;
+  //   order[i] = i;
+  // }
 
-  for (var i = 0; i < popSize; i++) {
-    population[i] = shuffle(order);
-  }
-  statusP = createP('').style('font-size', '32pt');
-  turn = 0;
-  }
+  // for (var i = 0; i < popSize; i++) {
+  //   population[i] = shuffle(order);
+  // }
+  // turn = 0;
+  // }
   background(0);
   calculateFitness();
   normalizeFitness();
@@ -98,6 +98,29 @@ function calcDistance(points, order) {
 
 function startloop() {
   totalCities = document.querySelector(".form-control").value;
-  turn++;
+  order = [];
+  recordDistance = Infinity;
+  for (var i = 0; i < totalCities; i++) {
+    var v = createVector(random(width), random(height / 2));
+    cities[i] = v;
+    order[i] = i;
+  }
+  for (var i = 0; i < popSize; i++) {
+    population[i] = shuffle(order);
+  }
+  loop();
+}
+
+function mousePressed() {
+  // ellipse(mouseX, mouseY, 16, 16);
+  totalCities++;
+  recordDistance = Infinity;
+  var v = createVector(mouseX, mouseY);
+  cities[count] = v;
+  order[count] = count;
+  count++;
+  for (var i = 0; i < popSize; i++) {
+    population[i] = shuffle(order);
+  }
   loop();
 }
