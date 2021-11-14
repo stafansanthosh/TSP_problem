@@ -5,19 +5,16 @@ var totalCities = 0;
 var popSize = 500;
 var population = [];
 var fitness = [];
-var count = 0;
 var order = [];
 
 var recordDistance = Infinity;
 var bestEver;
 var currentBest;
 
-var statusP;
-
 function setup() {
   var canvas = createCanvas(800, 800);
+  canvas.mousePressed(dostuff);
   canvas.parent('sketch-holder');
-  var order = [];
   noLoop();
   // for (var i = 0; i < totalCities; i++) {
   //   var v = createVector(random(width), random(height / 2));
@@ -28,7 +25,6 @@ function setup() {
   // for (var i = 0; i < popSize; i++) {
   //   population[i] = shuffle(order);
   // }
-  // statusP = createP('').style('font-size', '32pt');
 }
 
 function draw() {
@@ -112,14 +108,13 @@ function startloop() {
   loop();
 }
 
-function mousePressed() {
+function dostuff() {
   // ellipse(mouseX, mouseY, 16, 16);
-  totalCities++;
   recordDistance = Infinity;
   var v = createVector(mouseX, mouseY);
-  cities[count] = v;
-  order[count] = count;
-  count++;
+  cities[totalCities] = v;
+  order[totalCities] = totalCities;
+  totalCities++;
   for (var i = 0; i < popSize; i++) {
     population[i] = shuffle(order);
   }
